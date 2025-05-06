@@ -1,6 +1,9 @@
 import numpy as np
 from scipy.optimize import curve_fit
 
+from qegnv.experiment.config import u
+from qegnv.experiment.base_experiment import Experiment
+
 class DataFitter:
     def __init__(self, experiment):
         """
@@ -9,9 +12,23 @@ class DataFitter:
         :param experiment: An instance of an experiment class containing data to fit.
         """
         self.experiment = experiment
-        # this is wrong, but we need to get the data from the experiment class
-        self.data = experiment.get_data()  # Assumes the experiment class has a get_data() method
-        self.fit_results = {}
+        self.load_data()
+        
+    def load_data(self):
+        """
+        Pull data from the experiment instance, and prepare it for fitting and plotting.
+        """
+        contrast = self.experiment.counts0 - self.experiment.counts_ref0
+        self.x_data = self.experiment.var_vec / self.experiment.x_axis_scale
+        self.x_label = self.experiment.x_axis_label
+        
+        if self.experiment.counts1 is None:
+            self.y_label = "Contrast [a.u.]"
+            self.y_data = (self.experiment.var_vec, contrast)
+        else:
+            self.y_label = r"<$\sigma_z$> [a.u.]"
+            self.y_data = contrast -  (self.experiment.counts1 - self.experiment.counts_ref1)
+        
 
     def fit(self, model_function, initial_params=None, bounds=(-np.inf, np.inf)):
         """

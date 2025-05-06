@@ -1,0 +1,15 @@
+numpy
+matplotlib
+scipy
+scikit-learn
+networkx
+seaborn
+qualang-tools
+qm_qua
+jinja2
+colorama
+pandas
+h5py
+cma
+pyvisa-py
+PyVISA

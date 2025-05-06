@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="qeg-nv-user",  # Replace with your own username
+    name="qegnv",  # Replace with your own username
     version="0.1.0",
     author="Alex Ungar & Andrew Stasiuk",
     author_email="astasiuk@mit.edu",

@@ -3,8 +3,8 @@ import json
 from datetime import datetime
 import numpy as np
 
-from utils import NumpyEncoder, can_save_json
-from SG384 import SG384Control
+from qegnv.utils import NumpyEncoder, can_save_json
+from qegnv.devices.SG384 import SG384Control
 
 
 from qualang_tools.units import unit

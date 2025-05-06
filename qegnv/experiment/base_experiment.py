@@ -7,7 +7,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 
 # user defined classes
-from utils import NumpyEncoder
+from qegnv.utils import NumpyEncoder
 from qegnv.experiment.config import ConfigNV, u
 
 # Quantum machines imports

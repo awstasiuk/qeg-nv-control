@@ -6,3 +6,5 @@ __pycache__
 *.ipynb
 *.cfg
 *.expt
+qegnv.egg-info
+*.egg-info

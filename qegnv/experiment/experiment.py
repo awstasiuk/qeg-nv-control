@@ -3,7 +3,7 @@ import numpy as np
 
 # user defined classes
 from qegnv.experiment.config import u
-from base_experiment import Experiment
+from qegnv.experiment.base_experiment import Experiment
 
 
 class NVExperiment(Experiment):

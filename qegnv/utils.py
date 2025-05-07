@@ -3,6 +3,10 @@ import numpy as np
 
 
 def can_save_json(obj):
+    """
+    Check if an object can be saved as JSON, by attempting to serialize it.
+    This is a workaround for the fact that numpy types are not JSON serializable by default.
+    """
     try:
         json.dumps(obj, cls=NumpyEncoder)
         return True

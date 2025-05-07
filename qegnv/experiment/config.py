@@ -32,6 +32,44 @@ class ConfigNV:
     __initialized = False
 
     def __init__(self, filename=None, connect_qmm=True, connect_mw1=True, connect_mw2=True):
+        """
+        Initializes the configuration for the experiment.
+        This constructor sets up the configuration by either loading a default 
+        configuration or loading a specified configuration file. It also establishes 
+        connections to various components of the system and updates the configuration 
+        state.
+        
+        Args:
+            filename (str, optional): The name of the configuration file to load. 
+                If not provided, a default configuration is loaded, and a new 
+                filename is generated based on the current date in the format 
+                'config_YYYYMMDD.json'.
+            connect_qmm (bool, optional): Whether to establish a connection to the 
+                Quantum Machine Manager (QMM). Defaults to True.
+            connect_mw1 (bool, optional): Whether to establish a connection to the 
+                first microwave source (MW1). Defaults to True.
+            connect_mw2 (bool, optional): Whether to establish a connection to the 
+                second microwave source (MW2). Defaults to True.
+                
+        Methods:
+            - `load_default()`: Loads the default configuration parameters and addresses.
+            - `load(filename)`: Loads configuration parameters and addresses from the 
+              specified file.
+            - `connect(qmm, mw1, mw2)`: Establishes connections to the specified components.
+            - `update_config()`: Updates the configuration state based on the current 
+              parameters and connections.
+            - `save(filename)`: Saves the current configuration to a JSON file.
+            
+        Notes:
+            - If no filename is provided, the configuration is initialized with default 
+              parameters, and a new configuration file is named using the current date.
+            - The `connect` method is used to establish connections to the Quantum Machine 
+              Manager and microwave sources, which are essential for the experiment setup.
+            - The `update_config` method ensures that the configuration state is consistent 
+              and up-to-date after loading or modifying parameters. This automatically runs
+              when modifying the attributes of the class.
+        """
+        
         # load parameters and addresses
         if filename is None:
             self.load_default()
@@ -45,6 +83,25 @@ class ConfigNV:
         self.__initialized = True
 
     def connect(self, qmm=True, mw1=True, mw2=True):
+        """
+        Establishes connections to various components required for the experiment. This
+        class assumes that there are no more than 2 microwave sources connected to the QM,
+        and that both are SG384 devices. This can be generalized in the future if hardware
+        changes.
+        
+        Parameters:
+            qmm (bool): If True, initializes the Quantum Machines Manager (QMM) connection.
+                        Default is True.
+            mw1 (bool): If True, initializes the SG384Control connection for the first microwave port.
+                        Default is True.
+            mw2 (bool): If True, initializes the SG384Control connection for the second microwave port.
+                        Default is True.
+        Initializes:
+            self.qmm: An instance of QuantumMachinesManager if `qmm` is True.
+            self.SG384_NV: An instance of SG384Control for the first microwave port if `mw1` is True.
+            self.SG384_X: An instance of SG384Control for the second microwave port if `mw2` is True.
+        """
+        
         if qmm:
             self.qmm = QuantumMachinesManager(
                 host=self.qop_ip, cluster_name=self.cluster_name, octave=self.octave_config

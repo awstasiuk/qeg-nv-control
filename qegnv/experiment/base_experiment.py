@@ -39,6 +39,40 @@ matplotlib.use("tkAgg")
 
 class Experiment:
     def __init__(self, config=None):
+        """
+        Initializes the base experiment class with default configurations and containers for commands, results, 
+        plotting data, and experimental delays. This class serves as a foundational structure for conducting 
+        experiments, managing configurations, and storing results.
+        
+        Args:
+            config (ConfigNV, optional): A configuration object for the experiment. If not provided, a default 
+                                         `ConfigNV` object is created.
+                                         
+        Attributes:
+            var_vec (None or list): A container for the variable vector used in the experiment.
+            commands (list): A list to store commands for the experiment.
+            use_fixed (bool): A flag indicating whether fixed parameters are used in the experiment.
+            measure_len (None or int): The length of the measurement, if applicable.
+            measure_mode (None or str): The mode of measurement, if applicable.
+            measure_channel (None or int): The channel used for measurement, if applicable.
+            initialize (bool): A flag indicating whether the experiment has been initialized.
+            measure_delay (int): The delay (in milliseconds) before starting the measurement.
+            laser_channel (None or int): The channel used for controlling the laser, if applicable.
+            counts0 (None or list): A container for storing the primary measurement counts.
+            counts_ref0 (None or list): A container for storing reference counts for the primary measurement.
+            counts1 (None or list): A container for storing secondary measurement counts.
+            counts_ref1 (None or list): A container for storing reference counts for the secondary measurement.
+            iteration (None or int): The current iteration of the experiment.
+            x_axis_scale (int): The scaling factor for the x-axis in plots.
+            x_axis_label (str): The label for the x-axis in plots.
+            y_axis_label (str): The label for the y-axis in plots.
+            plot_title (str): The title of the plot for the experiment results.
+            config (ConfigNV): The configuration object for the experiment.
+            wait_between_runs (int): The delay (in milliseconds) between consecutive experiment runs.
+            wait_for_initialization (int): The delay (in milliseconds) for initialization before starting the experiment.
+            file_prefix (str): The default prefix for saving experiment-related files.
+        """
+        
         # containers for commands
         self.var_vec = None
         self.commands = []

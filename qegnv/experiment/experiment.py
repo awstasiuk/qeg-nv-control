@@ -36,66 +36,29 @@ class NVExperiment(Experiment):
         self.x_axis_label = "MW frequency [MHz]"
         self.plot_title = "CW ODMR"
 
-    # def setup_time_rabi(self, t_vec=np.arange(16, 200, 4)):
-    #     """
-    #     Sequence of commands to run a Rabi experiment sweeping time of MW.
+    def setup_time_rabi(self, t_vec=np.arange(16, 100, 4)):
+        """
+        Sequence of commands to run a Rabi experiment sweeping time of MW.
 
-    #     Args:
-    #         t_vec (array): Array of pulse durations in clock cycles (4ns)
-    #     """
+        Args:
+            t_vec (array): Array of pulse durations in ns (integer multiples of 4ns),
+                with a minimum of 16ns (4 clock cycles).
+        """
 
-    #     self.add_initialization(channel="AOM1")
-    #     self.add_pulse("x180", "NV", amplitude=1, length=t_vec)
-    #     self.add_align()
-    #     self.add_laser(mode="laser_ON", channel="AOM1")
-    #     self.add_measure(channel="SPCM1")
+        self.rabi_sequence(length=t_vec)
 
-    #     # for plotting results
-    #     self.file_prefix = "time_rabi"
-    #     self.x_axis_scale = 4
-    #     self.x_axis_label = "Rabi pulse duration [ns]"
-    #     self.plot_title = "Time Rabi"
-
-    # def setup_power_rabi(self, a_vec=np.arange(0.1, 2, 0.02)):
-    #     """
-    #     Sequence of commands to run a Rabi experiment sweeping time of MW.
-
-    #     Args:
-    #         a_vec (array): Array of pulse voltage scalings in [a.u.]
-    #     """
-
-    #     self.add_initialization(channel="AOM1")
-    #     self.add_pulse("x180", "NV", amplitude=a_vec, length=self.config.x180_len_NV)
-    #     self.add_align()
-    #     self.add_laser(mode="laser_ON", channel="AOM1")
-    #     self.add_measure(channel="SPCM1")
-
-    #     # for plotting results
-    #     self.x_axis_scale = self.config.x180_amp_NV
-    #     self.x_axis_label = "Rabi pulse amplitude [V]"
-    #     self.plot_title = "Power Rabi"
-
-    # def setup_time_rabi(self, t_vec=np.arange(4, 40, 4)):
-    #     """
-    #     Sequence of commands to run a Rabi experiment sweeping time of MW.
-
-    #     Args:
-    #         t_vec (array): Array of pulse durations in ns (integer multiples of 4ns)
-    #     """
-
-    #     self.rabi_sequence(length=t_vec)
-
-    #     # for plotting results
-    #     self.x_axis_scale = 4
-    #     self.x_axis_label = "Rabi pulse duration [ns]"
-    #     self.plot_title = "Time Rabi"
+        # for plotting results
+        self.x_axis_scale = 4
+        self.x_axis_label = "Rabi pulse duration [ns]"
+        self.plot_title = "Time Rabi"
 
     def setup_power_rabi(self, a_vec=np.arange(0.1, 2, 0.02)):
         """
         Sequence of commands to run a Rabi experiment sweeping amplitude of MW pulse.
 
         Args:
-            a_vec (array): Array of pulse voltage scalings in [a.u.]
+            a_vec (array): Array of pulse voltage scalings in [a.u.]. Should be no larger than 2.
+                Defaults to np.arange(0.1, 2, 0.02).
         """
 
         self.rabi_sequence(amplitude=a_vec)
@@ -110,7 +73,8 @@ class NVExperiment(Experiment):
         Sequence of commands to run a Rabi experiment sweeping time of MW.
 
         Args:
-            t_vec (array): Array of pulse durations in clock cycles (4ns)
+            f_vec (array): Array of pulse frequency in Hz
+            amplitude (float): Amplitude of the microwave drive. Defaults to 1.
         """
 
         self.rabi_sequence(frequency=f_vec, amplitude=amplitude)
@@ -121,6 +85,23 @@ class NVExperiment(Experiment):
         self.plot_title = "Pulsed ODMR"
 
     def rabi_sequence(self, frequency=None, amplitude=1, length=None):
+        """
+        Executes a generalized Rabi sequence on the NV center.
+        
+        This method performs a Rabi sequence by applying a microwave pulse to the NV center
+        and measuring the response. The sequence includes initialization, pulse application,
+        alignment, laser activation, and measurement.
+        
+        Parameters:
+            frequency (float, optional): The frequency of the microwave pulse in Hz. 
+                If provided, it updates the NV center's frequency. Defaults to None.
+            amplitude (float): The amplitude of the microwave pulse. Defaults to 1.
+            length (float, optional): The duration of the microwave pulse in seconds. 
+                If not provided, the default value is taken from `self.config.x180_len_NV`.
+        Note:
+            Exactly one of the arguments of this function should be an `Iterable` type. 
+            Whichever paramter is iterable will be swept over during the course of the experiment. 
+        """
 
         if frequency is not None:
             self.add_frequency_update("NV", frequency)

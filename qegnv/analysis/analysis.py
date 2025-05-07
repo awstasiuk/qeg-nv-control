@@ -56,14 +56,3 @@ class DataFitter:
         :return: The parameters and covariance matrix, or None if not found.
         """
         return self.fit_results.get(model_name, None)
-
-# Example usage:
-# Assuming `experiment` is an instance of an experiment class with a `get_data()` method
-# that returns (x_data, y_data).
-
-# def linear_model(x, a, b):
-#     return a * x + b
-
-# fitter = DataFitter(experiment)
-# params, cov = fitter.fit(linear_model, initial_params=[1, 0])
-# print("Fit parameters:", params)

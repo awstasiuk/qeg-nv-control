@@ -12,3 +12,5 @@ fitter = qnv.DataFitter(expt)
 # fit to a lorenztian with initial amplitude=1, mean=80, and gamma=0.5
 params, cov = fitter.fit(qnv.models.Lorentzian, initial_params=[1, 80, 0.5], bounds=(0, np.inf))
 print("Fitted parameters:", params)
+
+cfg.NV_LO_freq = params[1] * qnv.u.MHz

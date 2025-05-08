@@ -19,4 +19,4 @@ import qegnv.experiment.config
 from qegnv.analysis.analysis import DataFitter
 from qegnv.analysis.models import Lorentzian, Gaussian, ExpDampedCosine
 from qegnv.experiment.experiment import NVExperiment
-from qegnv.experiment.config import ConfigNV
+from qegnv.experiment.config import ConfigNV, u

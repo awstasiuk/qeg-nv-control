@@ -612,7 +612,7 @@ class Experiment:
         plt.pause(0.1)
         plt.show(block=False)
 
-    def save(self, filename=None):
+    def save(self, filename="default.json"):
         """
         Saves the experiment configuration to a JSON file.
 
@@ -620,9 +620,6 @@ class Experiment:
             filename (string): Path to the JSON file to save, defaults to a timestamped filename if
                 none is provided
         """
-        filename = (
-            # self.file_prefix + f"_{datetime.now().strftime("%Y%m%d_%H%M%S")}.json" if filename is None else filename #AU 20250418 commented out since was throwing error
-        )
         try:
             with open(filename, "w") as f:
                 attributes = {k: v for k, v in self.__dict__.items() if k != "config"}

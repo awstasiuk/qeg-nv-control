@@ -127,7 +127,7 @@ class ConfigNV:
         self.SG384_NV.set_amplitude(self.NV_LO_amp)
         self.SG384_NV.set_frequency(self.NV_LO_freq)
         self.SG384_NV.ntype_on()
-        self.SG384_NV.do_set_Modulation_State("ON")
+        self.SG384_NV.enable_modulation()
         self.SG384_NV.do_set_modulation_type("IQ")
 
     def disable_mw1(self):
@@ -138,12 +138,12 @@ class ConfigNV:
 
     def enable_mw2(self):
         """
-        Enable the microwave source for the dark spins
+        Enable the microwave source for the dark spinss
         """
         self.SG384_X.set_amplitude(self.X_LO_amp)
         self.SG384_X.set_frequency(self.X_LO_freq)
         self.SG384_X.ntype_on()
-        self.SG384_X.do_set_Modulation_State("ON")
+        self.SG384_X.enable_modulation()
         self.SG384_X.do_set_modulation_type("IQ")
 
     def disable_mw2(self):
@@ -229,13 +229,13 @@ class ConfigNV:
 
         # Frequencies
         self.NV_IF_freq = 80 * u.MHz
-        self.NV_LO_freq = 1.765 * u.GHz
+        self.NV_LO_freq = 1.769 * u.GHz
         self.NV_LO_amp = -24  # in dBm
         self.X_LO_amp = -23
         self.X_LO_freq = 0.943 * u.GHz
 
         # Pulses lengths
-        self.initialization_len_1 = 2000 * u.ns
+        self.initialization_len_1 = 3000 * u.ns
         self.meas_len_1 = 600 * u.ns
         self.long_meas_len_1 = 10_000 * u.ns
 
@@ -251,7 +251,7 @@ class ConfigNV:
         self.mw_amp_NV = 0.25  # in units of volts
         self.mw_len_NV = 500 * u.ns
 
-        self.x180_amp_NV = 0.216 / 2  # in units of volts
+        self.x180_amp_NV = 0.240 / 2  # in units of volts
         self.x180_len_NV = 2 * 500 * u.ns  # in units of ns
 
         self.x90_amp_NV = self.x180_amp_NV / 2  # in units of volts

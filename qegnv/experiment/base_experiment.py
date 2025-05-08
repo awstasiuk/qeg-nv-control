@@ -502,7 +502,7 @@ class Experiment:
         self.config.enable_mw()
 
         # Send the QUA program to the OPX, which compiles and executes it
-        self.job = qm.execute(expt)
+        job = qm.execute(expt)
 
         # set the data lists being generated to later fetch
         data_list = ["counts0", "counts_ref0"]
@@ -512,12 +512,12 @@ class Experiment:
 
         mode = "live" if live_plot else "wait_for_all"
         # create the fetch tool
-        results = fetching_tool(self.job, data_list=data_list, mode=mode)
+        results = fetching_tool(job, data_list=data_list, mode=mode)
 
         if live_plot:
 
             fig = plt.figure()
-            interrupt_on_close(fig, self.job)  # Interrupts the job when closing the figure
+            interrupt_on_close(fig, job)  # Interrupts the job when closing the figure
 
             while results.is_processing():
                 # Fetch results

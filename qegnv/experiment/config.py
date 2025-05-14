@@ -31,7 +31,7 @@ def IQ_imbalance(g, phi):
 class ConfigNV:
     __initialized = False
 
-    def __init__(self, filename=None, connect_qmm=True, connect_mw1=True, connect_mw2=True):
+    def __init__(self, filename=None, connect_qmm=True, connect_SG1=True, connect_SG2=True):
         """
         Initializes the configuration for the experiment.
         This constructor sets up the configuration by either loading a default 
@@ -46,16 +46,16 @@ class ConfigNV:
                 'config_YYYYMMDD.json'.
             connect_qmm (bool, optional): Whether to establish a connection to the 
                 Quantum Machine Manager (QMM). Defaults to True.
-            connect_mw1 (bool, optional): Whether to establish a connection to the 
-                first microwave source (MW1). Defaults to True.
-            connect_mw2 (bool, optional): Whether to establish a connection to the 
-                second microwave source (MW2). Defaults to True.
+            connect_SG1 (bool, optional): Whether to establish a connection to the 
+                first microwave source (SG1). Defaults to True.
+            connect_SG2 (bool, optional): Whether to establish a connection to the 
+                second microwave source (SG2). Defaults to True.
                 
         Methods:
             - `load_default()`: Loads the default configuration parameters and addresses.
             - `load(filename)`: Loads configuration parameters and addresses from the 
               specified file.
-            - `connect(qmm, mw1, mw2)`: Establishes connections to the specified components.
+            - `connect(qmm, SG1, SG2)`: Establishes connections to the specified components.
             - `update_config()`: Updates the configuration state based on the current 
               parameters and connections.
             - `save(filename)`: Saves the current configuration to a JSON file.
@@ -78,11 +78,11 @@ class ConfigNV:
             self.load(filename)
         self.filename = filename
 
-        self.connect(qmm=connect_qmm, mw1=connect_mw1, mw2=connect_mw2)
+        self.connect(qmm=connect_qmm, SG1=connect_SG1, SG2=connect_SG2)
         self.update_config()
         self.__initialized = True
 
-    def connect(self, qmm=True, mw1=True, mw2=True):
+    def connect(self, qmm=True, SG1=True, SG2=True):
         """
         Establishes connections to various components required for the experiment. This
         class assumes that there are no more than 2 microwave sources connected to the QM,
@@ -92,65 +92,65 @@ class ConfigNV:
         Parameters:
             qmm (bool): If True, initializes the Quantum Machines Manager (QMM) connection.
                         Default is True.
-            mw1 (bool): If True, initializes the SG384Control connection for the first microwave port.
+            SG1 (bool): If True, initializes the SG384Control connection for the first microwave port.
                         Default is True.
-            mw2 (bool): If True, initializes the SG384Control connection for the second microwave port.
+            SG2 (bool): If True, initializes the SG384Control connection for the second microwave port.
                         Default is True.
         Initializes:
             self.qmm: An instance of QuantumMachinesManager if `qmm` is True.
-            self.SG384_NV: An instance of SG384Control for the first microwave port if `mw1` is True.
-            self.SG384_X: An instance of SG384Control for the second microwave port if `mw2` is True.
+            self.SG384_1: An instance of SG384Control for the first microwave port if `SG1` is True.
+            self.SG384_2: An instance of SG384Control for the second microwave port if `SG2` is True.
         """
         
         if qmm:
             self.qmm = QuantumMachinesManager(
                 host=self.qop_ip, cluster_name=self.cluster_name, octave=self.octave_config
             )
-        if mw1:
-            self.SG384_NV = SG384Control(self.mw_port1)
-        if mw2:
-            self.SG384_X = SG384Control(self.mw_port2)
+        if SG1:
+            self.SG384_1 = SG384Control(self.mw_port1)
+        if SG2:
+            self.SG384_2 = SG384Control(self.mw_port2)
 
-    def enable_mw(self):
+    def enable_SG(self):
         """
         Checks if the microwave sources are connected and enables them.
         """
-        if self.SG384_NV is not None:
-            self.enable_mw1()
-        if self.SG384_X is not None:
-            self.enable_mw2()
+        if self.SG384_1 is not None:
+            self.enable_SG1()
+        if self.SG384_2 is not None:
+            self.enable_SG2()
 
-    def enable_mw1(self):
+    def enable_SG1(self):
         """
         Enables the microwave source for the NV center.
         """
-        self.SG384_NV.set_amplitude(self.NV_LO_amp)
-        self.SG384_NV.set_frequency(self.NV_LO_freq)
-        self.SG384_NV.ntype_on()
-        self.SG384_NV.enable_modulation()
-        self.SG384_NV.do_set_modulation_type("IQ")
+        self.SG384_1.set_amplitude(self.SG1_LO_amp)
+        self.SG384_1.set_frequency(self.SG1_LO_freq)
+        self.SG384_1.ntype_on()
+        self.SG384_1.enable_modulation()
+        self.SG384_1.do_set_modulation_type("IQ")
 
-    def disable_mw1(self):
+    def disable_SG1(self):
         """
         Disables the microwave source for the NV center.
         """
-        self.SG384_NV.ntype_off()
+        self.SG384_1.ntype_off()
 
-    def enable_mw2(self):
+    def enable_SG2(self):
         """
         Enable the microwave source for the dark spinss
         """
-        self.SG384_X.set_amplitude(self.X_LO_amp)
-        self.SG384_X.set_frequency(self.X_LO_freq)
-        self.SG384_X.ntype_on()
-        self.SG384_X.enable_modulation()
-        self.SG384_X.do_set_modulation_type("IQ")
+        self.SG384_2.set_amplitude(self.SG2_LO_amp)
+        self.SG384_2.set_frequency(self.SG2_LO_freq)
+        self.SG384_2.ntype_on()
+        self.SG384_2.enable_modulation()
+        self.SG384_2.do_set_modulation_type("IQ")
 
-    def disable_mw2(self):
+    def disable_SG2(self):
         """
         Disables the microwave source for the dark spins.
         """
-        self.SG384_X.ntype_off()
+        self.SG384_2.ntype_off()
 
     def save(self, filename=None):
         """
@@ -190,7 +190,7 @@ class ConfigNV:
         """
         Creates a ConfigNV object from a dictionary.
         """
-        config = ConfigNV(connect_mw1=False, connect_mw2=False, connect_qmm=False)
+        config = ConfigNV(connect_SG1=False, connect_SG2=False, connect_qmm=False)
         config.__initialized = False
         for k, v in d.items():
             config.__dict__[k] = v
@@ -227,12 +227,11 @@ class ConfigNV:
         self.mw_port1 = "TCPIP0::18.25.11.6::5025::SOCKET"
         self.mw_port2 = "TCPIP0::18.25.11.5::5025::SOCKET"
 
-        # Frequencies
-        self.NV_IF_freq = 80 * u.MHz
-        self.NV_LO_freq = 1.769 * u.GHz
-        self.NV_LO_amp = -24  # in dBm
-        self.X_LO_amp = -23
-        self.X_LO_freq = 0.943 * u.GHz
+        # Signal generator parameters
+        self.SG1_LO_freq = 1.769 * u.GHz #B = 365 Gauss
+        self.SG1_LO_amp = -24  # in dBm
+        self.SG2_LO_freq = 0.940 * u.GHz #free electron larmor frequency
+        self.SG2_LO_amp = -23 # in dBm
 
         # Pulses lengths
         self.initialization_len_1 = 3000 * u.ns
@@ -247,13 +246,21 @@ class ConfigNV:
         self.relaxation_time = 300 * u.ns
         self.wait_for_initialization = 2 * self.relaxation_time 
 
-        # MW parameters
+        # NV MW parameters
+        self.IF_freq_NV = 80 * u.MHz
         self.mw_amp_NV = 0.25  # in units of volts
         self.mw_len_NV = 500 * u.ns
+        self.x180_amp_NV = 0.238  # in units of volts
+        self.x180_len_NV = 500 * u.ns  # in units of ns
+        self.x90_amp_NV = self.x180_amp_NV / 2  # in units of volts
+        self.x90_len_NV = self.x180_len_NV  # in units of ns
 
-        self.x180_amp_NV = 0.240 / 2  # in units of volts
-        self.x180_len_NV = 2 * 500 * u.ns  # in units of ns
-
+        # X MW parameters
+        self.IF_freq_X = 80 * u.MHz
+        self.mw_amp_X = 0.25  # in units of volts
+        self.mw_len_X = 500 * u.ns
+        self.x180_amp_X = 0.144  # in units of volts
+        self.x180_len_NV = 500 * u.ns  # in units of ns
         self.x90_amp_NV = self.x180_amp_NV / 2  # in units of volts
         self.x90_len_NV = self.x180_len_NV  # in units of ns
 
@@ -312,10 +319,10 @@ class ConfigNV:
                     "mixInputs": {
                         "I": ("con1", 1),
                         "Q": ("con1", 2),
-                        "lo_frequency": self.NV_LO_freq,
+                        "lo_frequency": self.SG1_LO_freq,
                         "mixer": "mixer_NV",
                     },
-                    "intermediate_frequency": self.NV_IF_freq,
+                    "intermediate_frequency": self.IF_freq_NV,
                     "operations": {
                         "cw": "const_pulse",
                         "x180": "x180_pulse",
@@ -495,8 +502,8 @@ class ConfigNV:
             "mixers": {
                 "mixer_NV": [
                     {
-                        "intermediate_frequency": self.NV_IF_freq,
-                        "lo_frequency": self.NV_LO_freq,
+                        "intermediate_frequency": self.IF_freq_NV,
+                        "lo_frequency": self.SG1_LO_freq,
                         "correction": IQ_imbalance(self.g, self.phi),  # calibrated 20241029
                     },
                 ],

@@ -499,7 +499,7 @@ class Experiment:
         qm = self.config.qmm.open_qm(self.config.config)
 
         # turn on the microwave control
-        self.config.enable_mw()
+        self.config.enable_SG()
 
         # Send the QUA program to the OPX, which compiles and executes it
         job = qm.execute(expt)
@@ -554,8 +554,8 @@ class Experiment:
         self.iteration = iteration
 
         # turn off the microwave control, close connection
-        self.config.disable_mw1()
-        self.config.disable_mw2()
+        self.config.disable_SG1()
+        self.config.disable_SG2()
 
         if live_plot:
             plt.close(fig)

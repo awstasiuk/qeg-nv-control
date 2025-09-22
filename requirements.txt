@@ -1,5 +1,7 @@
 numpy
 matplotlib
+ipympl
+ipywidgets
 scipy
 scikit-learn
 networkx

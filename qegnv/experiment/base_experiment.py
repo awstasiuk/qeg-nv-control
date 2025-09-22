@@ -34,7 +34,7 @@ from qualang_tools.results import progress_counter, fetching_tool
 from qualang_tools.loops import from_array
 
 # plotting
-matplotlib.use("tkAgg")
+
 
 
 class Experiment:
@@ -96,6 +96,8 @@ class Experiment:
         self.x_axis_label = "Swept Variable [a.u.]"
         self.y_axis_label = "Intensity [kcps]"
         self.plot_title = "Measurement Results"
+        self.fig = None
+        self.ax = None
 
         # store the config
         self.config = config if config is not None else ConfigNV()
@@ -516,8 +518,8 @@ class Experiment:
 
         if live_plot:
 
-            fig = plt.figure()
-            interrupt_on_close(fig, job)  # Interrupts the job when closing the figure
+            # fig = plt.figure()
+            # interrupt_on_close(fig, job)  # Interrupts the job when closing the figure
 
             while results.is_processing():
                 # Fetch results
@@ -557,8 +559,8 @@ class Experiment:
         self.config.disable_mw1()
         self.config.disable_mw2()
 
-        if live_plot:
-            plt.close(fig)
+        # if live_plot:
+            # plt.close(fig)
         qm.close()
         # plot the final results
         self.plot_results(live_plot=False)
@@ -572,45 +574,48 @@ class Experiment:
 
         # plot_results(counts0=(1,2,3), counts_ref0=counts_ref0, counts1=counts1, counts_ref1=counts_ref1)
         """
+        if self.fig is None or self.ax is None:
+            self.fig, self.ax = plt.subplots()
+
         if live_plot:
-            plt.cla()
+            self.ax.cla()
         else:
-            plt.figure()
+            self.fig, self.ax = plt.subplots()
 
         counts0 = kwargs.get("counts0", self.counts0)
         counts_ref0 = kwargs.get("counts_ref0", self.counts_ref0)
         counts1 = kwargs.get("counts1", self.counts1)
         counts_ref1 = kwargs.get("counts_ref1", self.counts_ref1)
 
-        plt.plot(
+        self.ax.plot(
             self.var_vec * self.x_axis_scale,
             counts0 / 1000 / (self.measure_len * 1e-9),
             label="sig0",
         )
-        plt.plot(
+        self.ax.plot(
             self.var_vec * self.x_axis_scale,
             counts_ref0 / 1000 / (self.measure_len * 1e-9),
             label="ref0",
         )
 
         if counts1 is not None:
-            plt.plot(
+            self.ax.plot(
                 self.var_vec * self.x_axis_scale,
                 counts1 / 1000 / (self.measure_len * 1e-9),
                 label="sig1",
             )
-            plt.plot(
+            self.ax.plot(
                 self.var_vec * self.x_axis_scale,
                 counts_ref1 / 1000 / (self.measure_len * 1e-9),
                 label="ref1",
             )
 
-        plt.xlabel(self.x_axis_label)
-        plt.ylabel(self.y_axis_label)
-        plt.title(self.plot_title)
-        plt.legend()
+        self.ax.set_xlabel(self.x_axis_label)
+        self.ax.set_ylabel(self.y_axis_label)
+        self.ax.set_title(self.plot_title)
+        self.ax.legend()
+        self.fig.canvas.draw_idle()
         plt.pause(0.1)
-        plt.show(block=False)
 
     def save(self, filename="default.json"):
         """
